@@ -17,6 +17,7 @@ router.post('/signin', (req, res, next) => {
         }
     ).catch(
         _err => {
+            res.status(401);
             res.json({
                 err: _err
             });
