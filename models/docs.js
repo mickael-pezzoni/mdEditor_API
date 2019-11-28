@@ -26,7 +26,7 @@ module.exports = function Docs() {
             });
     }
 
-    this.getDocsByCatId = (catId) => {
+    this.getDocsByCatId = (catId, print) => {
         mysql.query('SELECT D.title, D.description, D.modified, D.created, D.file ' +
         'FROM Docs D ' +
         'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
@@ -42,7 +42,14 @@ module.exports = function Docs() {
                     'VALUES (?, ?, ?, ?, ?, ?, ?)', 
                     [docs.title, docs.file, docs.description, docs.modified, docs.created, docs.idUser], 
                     (error, results, field) => {
-
+                        print(results);
                     });
+    };
+
+    this.relDocsCat = (catId, docId) => {
+        mysql.query('INSERT INTO ')
+    }
+    this.deleteByDocsId = (docsId) => {
+        console.log(docsId);
     };
 }

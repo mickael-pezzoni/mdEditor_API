@@ -27,7 +27,13 @@ router.get('/cat/:catId', (req, res, next) => {
         res.json(results);
     });
 });
-router.post('/new', (req, res, next) => {
 
+router.delete('/:docsId', (req, res, next) => {
+    docsModel.deleteByDocsId(req.params.docsId);
 });
+
+router.post('/new', (req, res, next) => {
+    console.log(req.body);
+});
+
 module.exports = router;
