@@ -12,6 +12,7 @@ router.post('/signin', (req, res, next) => {
     loginModel.signin(loginForm).then(
         _status => {
             res.json({
+                code: 200,
                 msg: 'Login successfull'
             });
         }
@@ -19,6 +20,7 @@ router.post('/signin', (req, res, next) => {
         _err => {
             res.status(401);
             res.json({
+                code: 401,
                 err: _err
             });
         }
