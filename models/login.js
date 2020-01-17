@@ -45,12 +45,6 @@ module.exports = function Login() {
     this.checkUserExist = (username) => {
         return new Promise((resolve, reject) => {
             mysql.query(SQL_REQUEST.LOGIN.SIGNIN, [username], (error, results, fields) => {
-                Preview
-                
-                Preview
-                Preview
-                
-                
                 if (results.length > 0) {
                     reject('User Already exist');
                 } else {
