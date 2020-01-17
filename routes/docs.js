@@ -15,13 +15,13 @@ router.get('/user/:userId', (req, res, next) => {
         res.json(results);
     });
 });
-
+// Join docs ant category
 router.get('/docsByCat', (req, res, next) => {
     docsModel.getDocsByCat((results) => {
         res.json(results);
     });
 });
-
+// return cat from id
 router.get('/cat/:catId', (req, res, next) => {
     docsModel.getDocsByCatId(req.params.catId, (results) => {
         res.json(results);

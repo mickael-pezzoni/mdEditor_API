@@ -6,7 +6,7 @@ module.exports = function Login() {
         this.checkUserExist(register.username).then(
             _status => {
                 bcrypt.hash(register.password, 10, (err, hash) => {
-                    mysql.query('INSERT INTO User(`username`, `passwd`) VALUES(?, ?);', [register.username, hash], (error, results, fields) => {
+                    mysql.query('INSERT INTO User(`username`, `passwd`, `createdDate`) VALUES(?, ?, ?);', [register.username, hash, new Date()], (error, results, fields) => {
                         if (error)
                             console.log(error);
                         next(null);
@@ -26,6 +26,7 @@ module.exports = function Login() {
                 _res =>  {
                     bcrypt.compare(loginForm.password, _res.passwd, (err, res) => {
                         if (res) {
+                            this.setLastLoginDate(_res.idUser);
                             resolve(true);
                         } else {
                             reject('Incorrect login');
@@ -43,7 +44,6 @@ module.exports = function Login() {
     this.checkUserExist = (username) => {
         return new Promise((resolve, reject) => {
             mysql.query('SELECT * FROM User WHERE username = ?;', [username], (error, results, fields) => {
-                console.log(results);
                 if (results.length > 0) {
                     reject('User Already exist');
                 } else {
@@ -64,6 +64,14 @@ module.exports = function Login() {
                     reject(true);
                 }
             });
+        });
+    }
+
+    this.setLastLoginDate = (userId) => {
+        mysql.query('UPDATE User SET lastLogin = ?, nbLogin = ? WHERE idUser = ?;', [new Date(), userId], (error, results, fields) => {
+            if (error) {
+                throw Error('Erreur lastLogin');
+            }
         });
     }
 }
