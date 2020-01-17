@@ -1,12 +1,13 @@
 const mysql = require('../sql_config');
 const bcrypt = require('bcrypt');
+const SQL_REQUEST = require('../constants/sql_request');
 
 module.exports = function Login() {
     this.signup = (register, next) => {
         this.checkUserExist(register.username).then(
             _status => {
                 bcrypt.hash(register.password, 10, (err, hash) => {
-                    mysql.query('INSERT INTO User(`username`, `passwd`, `createdDate`) VALUES(?, ?, ?);', [register.username, hash, new Date()], (error, results, fields) => {
+                    mysql.query(SQL_REQUEST.LOGIN.SIGNUP, [register.username, hash, new Date()], (error, results, fields) => {
                         if (error)
                             console.log(error);
                         next(null);
@@ -43,7 +44,13 @@ module.exports = function Login() {
 
     this.checkUserExist = (username) => {
         return new Promise((resolve, reject) => {
-            mysql.query('SELECT * FROM User WHERE username = ?;', [username], (error, results, fields) => {
+            mysql.query(SQL_REQUEST.LOGIN.SIGNIN, [username], (error, results, fields) => {
+                Preview
+                
+                Preview
+                Preview
+                
+                
                 if (results.length > 0) {
                     reject('User Already exist');
                 } else {
@@ -55,7 +62,7 @@ module.exports = function Login() {
 
     this.getUserByUsername = (username) => {
         return new Promise((resolve, reject) => {
-            mysql.query('SELECT * FROM User WHERE username = ?;', [username], (error, results, fields) => {
+            mysql.query(SQL_REQUEST.LOGIN.RETRIEVE_USER, [username], (error, results, fields) => {
                 if (error)
                     console.log(error);
                 if (results.length > 0) {
@@ -68,7 +75,7 @@ module.exports = function Login() {
     }
 
     this.setLastLoginDate = (userId) => {
-        mysql.query('UPDATE User SET lastLogin = ?, nbLogin = ? WHERE idUser = ?;', [new Date(), userId], (error, results, fields) => {
+        mysql.query(SQL_REQUEST.LOGIN.UPDATE_USER, [new Date(), userId], (error, results, fields) => {
             if (error) {
                 throw Error('Erreur lastLogin');
             }

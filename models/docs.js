@@ -1,25 +1,22 @@
 const mysql = require('../sql_config');
+const SQL_REQUEST = require('../constants/sql_request');
 
 module.exports = function Docs() {
 
     this.getDocsByUser = (userId, print) => {
-        mysql.query('SELECT * FROM Docs WHERE idUser = ?;', [userId], (error, results, fields) => {
+        mysql.query(SQL_REQUEST.DOC.GET.DOCS_USER, [userId], (error, results, fields) => {
             print(results);
         });
     }
 
-    this.getAllDocs = (print) => {
+/*     this.getAllDocs = (print) => {
         mysql.query('SELECT * FROM Docs;', (error, results, fields) => {
             print(results);
         });
-    }
+    } */
 
     this.getDocsByCat = (print) => {
-        mysql.query('SELECT D.title, D.description, D.modified, D.created, D.file, C.name ' +
-            'FROM Docs D ' +
-            'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
-            'INNER JOIN Categories C ON C.idCat = CT.idCat ' +
-            'GROUP BY D.title, D.description, D.modified, D.created, D.file, C.name;', (error, results, fields) => {
+        mysql.query(SQL_REQUEST.DOC.GET.ALL_DOCS, (error, results, fields) => {
                 if (error)
                     console.log(error);
                 print(results);
@@ -27,20 +24,13 @@ module.exports = function Docs() {
     }
 
     this.getDocsByCatId = (catId, print) => {
-        mysql.query('SELECT D.title, D.description, D.modified, D.created, D.file ' +
-        'FROM Docs D ' +
-        'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
-        'INNER JOIN Categories C ON C.idCat = CT.idCat ' +
-        'WHERE C.idCat = ? ' +
-        'GROUP BY D.title, D.description, D.modified, D.created, D.file;', [catId], (error, results, fields) => {
+        mysql.query(SQL_REQUEST.DOC.GET.DOCS_CATID, [catId], (error, results, fields) => {
             print(results);
         });
     }
 
     this.newDocs = (docs) => {
-        mysql.query('INSERT INTO `Docs`(title`, `file`, `description`, `modified`, `created`, `idUser`) ' +
-                    'VALUES (?, ?, ?, ?, ?, ?, ?)', 
-                    [docs.title, docs.file, docs.description, docs.modified, docs.created, docs.idUser], 
+        mysql.query(SQL_REQUEST.DOC.POST.NEW_DOC, [docs.title, docs.file, docs.description, docs.modified, docs.created, docs.idUser], 
                     (error, results, field) => {
                         print(results);
                     });
