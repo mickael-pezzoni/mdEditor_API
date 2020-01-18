@@ -10,14 +10,16 @@ router.post('/signin', (req, res, next) => {
         password: req.body.password
     };
     loginModel.signin(loginForm).then(
-        _status => {
+        _user => {
             res.json({
                 code: 200,
-                msg: 'Login successfull'
+                msg: 'Login successfull',
+                userId: _user.idUser
             });
         }
     ).catch(
         _err => {
+            console.log('ERR');
             res.status(401);
             res.json({
                 code: 401,

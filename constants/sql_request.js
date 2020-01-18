@@ -7,23 +7,32 @@ module.exports = {
     },
     DOC: {
         GET: {
-            DOCS_USERID: 'SELECT * FROM Docs WHERE idUser = ?;',
-
-            ALL_DOCS: 'SELECT D.title, D.description, D.modified, D.created, D.file, C.name ' +
+            DOCS_USERID: 'SELECT D.title, D.description, D.modified, D.created, D.path, C.name ' +
             'FROM Docs D ' +
+            'INNER JOIN User U ON U.idUser = D.idUser' +
             'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
             'INNER JOIN Categories C ON C.idCat = CT.idCat ' +
-            'GROUP BY D.title, D.description, D.modified, D.created, D.file, C.name;',
+            'WHERE U.idUser = ?' +
+            'GROUP BY D.title, D.description, D.modified, D.created, D.path, C.name;',
 
-            DOCS_CATID: 'SELECT D.title, D.description, D.modified, D.created, D.file ' +
+            DOCSID: 'SELECT * FROM Docs WHERE idDoc = ?;',
+
+            ALL_DOCS: 'SELECT D.title, D.description, D.modified, D.created, D.path, C.name ' +
+            'FROM Docs D ' +
+            'INNER JOIN User U ON U.idUser = D.idUser' +
+            'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
+            'INNER JOIN Categories C ON C.idCat = CT.idCat ' +
+            'GROUP BY D.title, D.description, D.modified, D.created, D.path, C.name;',
+
+            DOCS_CATID: 'SELECT D.title, D.description, D.modified, D.created, D.path ' +
             'FROM Docs D ' +
             'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
             'INNER JOIN Categories C ON C.idCat = CT.idCat ' +
             'WHERE C.idCat = ? ' +
-            'GROUP BY D.title, D.description, D.modified, D.created, D.file;',
+            'GROUP BY D.title, D.description, D.modified, D.created, D.path;',
         },
         POST: {
-            NEW_DOC: 'INSERT INTO `Docs`(title`, `file`, `description`, `modified`, `created`, `idUser`) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            NEW_DOC: 'INSERT INTO Docs(`title`, `path`, `description`, `modified`, `created`, `idUser`) VALUES (?, ?, ?, ?, ?, ?)',
 
         },
         PUT: {
@@ -39,7 +48,7 @@ module.exports = {
             CATID: 'SELECT * FROM Categories WHERE `idCat` = ?'
         },
         POST: {
-
+            DOCS_CAT: 'INSERT INTO catDoc (`idDoc`, `idCat`) VALUES(?, ?);'
         },
         PUT: {
 

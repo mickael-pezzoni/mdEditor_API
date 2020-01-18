@@ -1,26 +1,48 @@
 const mysql = require('../sql_config');
 const SQL_REQUEST = require('../constants/sql_request');
+const fs = require('fs');
+const os = require('os');
 
-module.exports = function Docs() {
+const FILE_DIRECTORY = `${os.homedir()}/git/mdEditor_API/docsFile`
+
+module.exports = function doc() {
 
     this.getDocsByUser = (userId, print) => {
-        mysql.query(SQL_REQUEST.DOC.GET.DOCS_USER, [userId], (error, results, fields) => {
+        mysql.query(SQL_REQUEST.DOC.GET.DOCS_USERID, [userId], (error, results, fields) => {
             print(results);
         });
     }
 
-/*     this.getAllDocs = (print) => {
-        mysql.query('SELECT * FROM Docs;', (error, results, fields) => {
-            print(results);
-        });
-    } */
-
-    this.getDocsByCat = (print) => {
-        mysql.query(SQL_REQUEST.DOC.GET.ALL_DOCS, (error, results, fields) => {
-                if (error)
-                    console.log(error);
+    /*     this.getAlldoc = (print) => {
+            mysql.query('SELECT * FROM doc;', (error, results, fields) => {
                 print(results);
             });
+        } */
+
+    this.writeInFile = (content, fileTitle, print) => {
+        fs.writeFile(`${FILE_DIRECTORY}/${fileTitle}.md`, content, (err) => {
+            if (err) {
+                console.log(err);
+            }
+            print('File saved');
+        });
+
+    }
+
+    this.readFile = (fileTitle, print) => {
+        fs.readFile(`${FILE_DIRECTORY}/${fileTitle}.md`, (err, data) => {
+            if (err) {
+                console.log(err);
+            }
+            print(data);
+        });
+    }
+    this.getDocsByCat = (print) => {
+        mysql.query(SQL_REQUEST.DOC.GET.ALL_DOCS, (error, results, fields) => {
+            if (error)
+                console.log(error);
+            print(results);
+        });
     }
 
     this.getDocsByCatId = (catId, print) => {
@@ -29,17 +51,54 @@ module.exports = function Docs() {
         });
     }
 
-    this.newDocs = (docs) => {
-        mysql.query(SQL_REQUEST.DOC.POST.NEW_DOC, [docs.title, docs.file, docs.description, docs.modified, docs.created, docs.idUser], 
-                    (error, results, field) => {
-                        print(results);
+    this.checkFileExist = (docId) => {
+        console.log(docId);
+        return new Promise((resolve, reject) => {
+            mysql.query(SQL_REQUEST.DOC.GET.DOCSID, [docId], (error, results, fields) => {
+                if (error) {
+                    console.log(error);
+                }
+                if (results.length > 0) {
+                    reject(docId);
+                } else {
+                    resolve(true);
+                }
+
+            });
+        })
+    }
+
+    this.newDoc = (doc, print) => {
+        this.checkFileExist(doc._id).then(_x => {
+            mysql.query(SQL_REQUEST.DOC.POST.NEW_DOC, [`${doc.title}`, `${FILE_DIRECTORY}`, 
+            doc.description, new Date(doc.modified), new Date(doc.created), doc.userId],
+                (error, results, field) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    console.log(results);
+                    this.relDocCat(doc.catId, results.insertId);
+                    const contentFile = doc.content ? doc.content: '';
+                    this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
+                        print(results.insertId, arg);
                     });
+                });
+        }).catch(docId => {
+            const contentFile = doc.content ? doc.content: '';
+            this.writeInFile(contentFile, `#${docId}-${doc.title}`, (arg) => {
+                print(docId, arg);
+            });
+        });
     };
 
-    this.relDocsCat = (catId, docId) => {
-        mysql.query('INSERT INTO ')
+    this.relDocCat = (catId, docId) => {
+        mysql.query(SQL_REQUEST.CAT.POST.DOCS_CAT, [catId, docId], (error, results, fields) => {
+            if (error) {
+                console.log(error);
+            }
+        });
     }
-    this.deleteByDocsId = (docsId) => {
-        console.log(docsId);
+    this.deleteByDocId = (docId) => {
+        console.log(docId);
     };
 }

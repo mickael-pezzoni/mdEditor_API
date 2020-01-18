@@ -29,11 +29,18 @@ router.get('/cat/:catId', (req, res, next) => {
 });
 
 router.delete('/:docsId', (req, res, next) => {
-    docsModel.deleteByDocsId(req.params.docsId);
+    docsModel.deleteByDocId(req.params.docsId);
 });
 
 router.post('/new', (req, res, next) => {
-    console.log(req.body);
+    const doc = req.body;
+    console.log(doc);
+    docsModel.newDoc(doc, (docId, arg) => {
+        res.json({
+            'msg': arg,
+            'docId': docId,
+        });
+    });
 });
 
 module.exports = router;

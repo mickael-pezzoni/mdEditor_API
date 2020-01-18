@@ -6,6 +6,7 @@ module.exports = function Login() {
     this.signup = (register, next) => {
         this.checkUserExist(register.username).then(
             _status => {
+                console.log();
                 bcrypt.hash(register.password, 10, (err, hash) => {
                     mysql.query(SQL_REQUEST.LOGIN.SIGNUP, [register.username, hash, new Date()], (error, results, fields) => {
                         if (error)
@@ -25,10 +26,11 @@ module.exports = function Login() {
         return new Promise((resolve, reject) => {
             this.getUserByUsername(loginForm.username).then(
                 _res =>  {
+                    console.log(_res);
                     bcrypt.compare(loginForm.password, _res.passwd, (err, res) => {
                         if (res) {
                             this.setLastLoginDate(_res.idUser);
-                            resolve(true);
+                            resolve(_res);
                         } else {
                             reject('Incorrect login');
                         }
