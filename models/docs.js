@@ -9,6 +9,9 @@ module.exports = function doc() {
 
     this.getDocsByUser = (userId, print) => {
         mysql.query(SQL_REQUEST.DOC.GET.DOCS_USERID, [userId], (error, results, fields) => {
+            if (error) {
+                console.log(error);
+            }
             print(results);
         });
     }
@@ -52,7 +55,6 @@ module.exports = function doc() {
     }
 
     this.checkFileExist = (docId) => {
-        console.log(docId);
         return new Promise((resolve, reject) => {
             mysql.query(SQL_REQUEST.DOC.GET.DOCSID, [docId], (error, results, fields) => {
                 if (error) {
@@ -75,13 +77,14 @@ module.exports = function doc() {
                 (error, results, field) => {
                     if (error) {
                         console.log(error);
+                    } else {
+                        console.log(results);
+                        this.relDocCat(doc.idCat, results.insertId);
+                        const contentFile = doc.content ? doc.content: '';
+                        this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
+                            print(results.insertId, arg);
+                        });
                     }
-                    console.log(results);
-                    this.relDocCat(doc.catId, results.insertId);
-                    const contentFile = doc.content ? doc.content: '';
-                    this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
-                        print(results.insertId, arg);
-                    });
                 });
         }).catch(docId => {
             const contentFile = doc.content ? doc.content: '';
@@ -92,9 +95,10 @@ module.exports = function doc() {
     };
 
     this.relDocCat = (catId, docId) => {
-        mysql.query(SQL_REQUEST.CAT.POST.DOCS_CAT, [catId, docId], (error, results, fields) => {
+        mysql.query(SQL_REQUEST.CAT.POST.DOCS_CAT, [docId, catId], (error, results, fields) => {
             if (error) {
                 console.log(error);
+                console.log(fields);
             }
         });
     }

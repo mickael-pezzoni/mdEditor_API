@@ -7,13 +7,12 @@ module.exports = {
     },
     DOC: {
         GET: {
-            DOCS_USERID: 'SELECT D.title, D.description, D.modified, D.created, D.path, C.name ' +
+            DOCS_USERID: 'SELECT D.title, D.description, D.modified, D.created, D.path, C.idCat ' +
             'FROM Docs D ' +
-            'INNER JOIN User U ON U.idUser = D.idUser' +
             'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
             'INNER JOIN Categories C ON C.idCat = CT.idCat ' +
-            'WHERE U.idUser = ?' +
-            'GROUP BY D.title, D.description, D.modified, D.created, D.path, C.name;',
+            'WHERE D.idUser = ?' +
+            'GROUP BY D.title, D.description, D.modified, D.created, D.path, C.idCat;',
 
             DOCSID: 'SELECT * FROM Docs WHERE idDoc = ?;',
 
