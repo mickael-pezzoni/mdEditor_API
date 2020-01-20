@@ -26,7 +26,6 @@ module.exports = function Login() {
         return new Promise((resolve, reject) => {
             this.getUserByUsername(loginForm.username).then(
                 _res =>  {
-                    console.log(_res);
                     bcrypt.compare(loginForm.password, _res.passwd, (err, res) => {
                         if (res) {
                             this.setLastLoginDate(_res.idUser);

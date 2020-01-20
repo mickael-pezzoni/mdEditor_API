@@ -21,6 +21,16 @@ router.get('/docsByCat', (req, res, next) => {
         res.json(results);
     });
 });
+
+router.get('/content/:docId', (req, res, next) => {
+    docsModel.getContentByDocId(req.params.docId, (content, err) => {
+        if(err) {
+            res.json({err: err})
+        } else {
+            res.json({content: content});
+        }
+    })
+});
 // return cat from id
 router.get('/cat/:catId', (req, res, next) => {
     docsModel.getDocsByCatId(req.params.catId, (results) => {

@@ -33,13 +33,36 @@ module.exports = function doc() {
     }
 
     this.readFile = (fileTitle, print) => {
-        fs.readFile(`${FILE_DIRECTORY}/${fileTitle}.md`, (err, data) => {
+        fs.readFile(`${FILE_DIRECTORY}/${fileTitle}.md`, 'utf8', (err, data) => {
             if (err) {
-                console.log(err);
+                print(null, err.code)
+            } else {
+                print(data, null);
             }
-            print(data);
         });
     }
+
+    this.getContentByDocId = (docId, print) => {
+        this.getDocById(docId, (res) => {
+            if (res.length > 0) {
+                const completeTitle = `#${res[0].idDoc}-${res[0].title}`;
+                this.readFile(completeTitle, print);
+            } else {
+                print(null, 'Docs not exist');
+            }
+        });
+    }
+
+    this.getDocById = (docId, print) => {
+        mysql.query(SQL_REQUEST.DOC.GET.DOCSID, [docId], (error, results, field) => {
+            if (error) {
+                console.log(error);
+            } else {
+                print(results)
+            }
+        });
+    }
+
     this.getDocsByCat = (print) => {
         mysql.query(SQL_REQUEST.DOC.GET.ALL_DOCS, (error, results, fields) => {
             if (error)
