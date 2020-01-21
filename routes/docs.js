@@ -42,6 +42,11 @@ router.delete('/:docsId', (req, res, next) => {
     docsModel.deleteByDocId(req.params.docsId);
 });
 
+router.delete('/category/:docId/:catId', (req, res, next) => {
+    docsModel.deleteCategoryDoc(req.params.docId, req.params.catId, (res) => {
+        res.json({msg: res});
+    });
+})
 router.post('/new', (req, res, next) => {
     const doc = req.body;
     console.log(doc);

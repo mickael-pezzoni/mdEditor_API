@@ -41,13 +41,18 @@ module.exports = {
 
         }
     },
+    CAT_DOC: {
+        POST: {
+            DOCS_CAT: 'INSERT INTO catDoc (`idDoc`, `idCat`) VALUES(?, ?);'
+        },
+        DELETE: 'DELETE FROM catDoc WHERE idDoc = ? AND idCat = ?;'
+    },
     CAT: {
         GET: {
             ALL: 'SELECT * FROM Categories;',
             CATID: 'SELECT * FROM Categories WHERE `idCat` = ?'
         },
         POST: {
-            DOCS_CAT: 'INSERT INTO catDoc (`idDoc`, `idCat`) VALUES(?, ?);'
         },
         PUT: {
 

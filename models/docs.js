@@ -5,7 +5,7 @@ const os = require('os');
 
 const FILE_DIRECTORY = `${os.homedir()}/git/mdEditor_API/docsFile`
 
-module.exports = function doc() {
+module.exports = function Doc() {
 
     this.getDocsByUser = (userId, print) => {
         mysql.query(SQL_REQUEST.DOC.GET.DOCS_USERID, [userId], (error, results, fields) => {
@@ -129,10 +129,20 @@ module.exports = function doc() {
     };
 
     this.relDocCat = (catId, docId) => {
-        mysql.query(SQL_REQUEST.CAT.POST.DOCS_CAT, [docId, catId], (error, results, fields) => {
+        mysql.query(SQL_REQUEST.CAT_DOC.POST.DOCS_CAT, [docId, catId], (error, results, fields) => {
             if (error) {
                 console.log(error);
                 console.log(fields);
+            }
+        });
+    }
+
+    this.deleteCategoryDoc = (docId, catId, print) => {
+        mysql.query(SQL_REQUEST.CAT_DOC.DELETE, [docId, catId], (error, results, fields) => {
+            if (error) {
+                console.log(error);
+            } else {
+                print('Category deleted');
             }
         });
     }
