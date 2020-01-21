@@ -12,7 +12,19 @@ module.exports = function doc() {
             if (error) {
                 console.log(error);
             }
-            print(results);
+            const finalRes = [];
+            results.map(_x => {
+                _x.idCat = [_x.idCat];
+                return _x;
+            }).forEach(_doc => {
+                const index = finalRes.findIndex(_x => _x._id === _doc._id);
+                if (index !== -1) {
+                    finalRes[index].idCat.push(_doc.idCat[0]);
+                } else {
+                    finalRes.push(_doc)
+                }
+            });
+            print(finalRes);
         });
     }
 
@@ -29,7 +41,6 @@ module.exports = function doc() {
             }
             print('File saved');
         });
-
     }
 
     this.readFile = (fileTitle, print) => {
