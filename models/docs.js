@@ -113,10 +113,11 @@ module.exports = function Doc() {
                         console.log(error);
                     } else {
                         console.log(results);
-                        this.relDocCat(doc.idCat, results.insertId);
-                        const contentFile = doc.content ? doc.content: '';
-                        this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
-                            print(results.insertId, arg);
+                        this.relDocCat(doc.idCat, results.insertId, (arg) => {
+                            const contentFile = doc.content ? doc.content: '';
+                            this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
+                                print(results.insertId, arg);
+                            });
                         });
                     }
                 });
@@ -128,11 +129,13 @@ module.exports = function Doc() {
         });
     };
 
-    this.relDocCat = (catId, docId) => {
+    this.relDocCat = (catId, docId, print) => {
         mysql.query(SQL_REQUEST.CAT_DOC.POST.DOCS_CAT, [docId, catId], (error, results, fields) => {
             if (error) {
                 console.log(error);
                 console.log(fields);
+            } else {
+                print(fields);
             }
         });
     }
@@ -146,6 +149,7 @@ module.exports = function Doc() {
             }
         });
     }
+
     this.deleteByDocId = (docId) => {
         console.log(docId);
     };

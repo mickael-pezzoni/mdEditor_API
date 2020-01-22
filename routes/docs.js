@@ -43,10 +43,11 @@ router.delete('/:docsId', (req, res, next) => {
 });
 
 router.delete('/category/:docId/:catId', (req, res, next) => {
-    docsModel.deleteCategoryDoc(req.params.docId, req.params.catId, (res) => {
-        res.json({msg: res});
+    docsModel.deleteCategoryDoc(req.params.docId, req.params.catId, (arg) => {
+        res.json({msg: arg});
     });
 })
+
 router.post('/new', (req, res, next) => {
     const doc = req.body;
     console.log(doc);
@@ -58,4 +59,9 @@ router.post('/new', (req, res, next) => {
     });
 });
 
+router.post('/category/new', (req, res, next) => {
+     docsModel.relDocCat(req.body.catId, req.body.docId, (arg) => {
+        res.json({msg: arg});
+    });
+});
 module.exports = router;
