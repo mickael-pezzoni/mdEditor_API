@@ -14,7 +14,11 @@ module.exports = function Doc() {
             }
             const finalRes = [];
             results.map(_x => {
-                _x.idCat = [_x.idCat];
+                if (_x.idCat === null){
+                    _x.idCat = [];
+                } else {
+                    _x.idCat = [_x.idCat];
+                }
                 return _x;
             }).forEach(_doc => {
                 const index = finalRes.findIndex(_x => _x._id === _doc._id);
