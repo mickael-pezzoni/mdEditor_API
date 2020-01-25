@@ -33,14 +33,16 @@ router.post('/signup', (req, res, next) => {
         username: req.body.username,
         password: req.body.password
     };
-    loginModel.signup(loginForm, (err) => {
+    loginModel.signup(loginForm, (succes, err) => {
         if (err != null) {
             res.json({
                 err: err
             });
         } else {
             res.json({
-                msg: 'user create'
+                code: 200,
+                msg: 'User create',
+                userId: succes
             });
         }
     });

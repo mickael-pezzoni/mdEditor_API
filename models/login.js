@@ -11,13 +11,15 @@ module.exports = function Login() {
                     mysql.query(SQL_REQUEST.LOGIN.SIGNUP, [register.username, hash, new Date()], (error, results, fields) => {
                         if (error)
                             console.log(error);
-                        next(null);
+                        else {
+                            next(results.insertId, null);
+                        }
                     });
                 });
             }
         ).catch(
             _err => {
-                next(_err);
+                next(null, _err);
             }
         )
     }
