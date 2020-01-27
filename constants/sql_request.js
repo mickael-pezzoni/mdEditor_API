@@ -35,7 +35,7 @@ module.exports = {
 
         },
         PUT: {
-
+            UPDATE_DOC: 'UPDATE Docs SET title = ?, modified = ? WHERE idDoc = ?;'
         },
         DELETE: {
 

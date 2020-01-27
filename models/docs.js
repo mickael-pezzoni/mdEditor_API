@@ -57,6 +57,14 @@ module.exports = function Doc() {
         });
     }
 
+    this.renameFile = (oldTitle, newTitle) => {
+        fs.rename(`${FILE_DIRECTORY}/${oldTitle}.md`, `${FILE_DIRECTORY}/${newTitle}.md`, (err) => {
+            if (err){
+                console.log(err);
+            }
+        });
+    }
+
     this.getContentByDocId = (docId, print) => {
         this.getDocById(docId, (res) => {
             if (res.length > 0) {
@@ -99,7 +107,7 @@ module.exports = function Doc() {
                     console.log(error);
                 }
                 if (results.length > 0) {
-                    reject(docId);
+                    reject(results[0]);
                 } else {
                     resolve(true);
                 }
@@ -117,21 +125,38 @@ module.exports = function Doc() {
                         console.log(error);
                     } else {
                         console.log(results);
-                        this.relDocCat(doc.idCat, results.insertId, (arg) => {
-                            const contentFile = doc.content ? doc.content: '';
-                            this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
-                                print(results.insertId, arg);
-                            });
+                        const contentFile = doc.content ? doc.content: '';
+                        this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
+                            print(results.insertId, arg);
                         });
+                        if (doc.idCat.length > 0) { // if category
+                            this.relDocCat(doc.idCat, results.insertId,() => {});
+                        }
                     }
                 });
-        }).catch(docId => {
+        }).catch(docDb => { //  if file exist
+            if (doc.title !== docDb.title) { // if file name change
+                this.renameFile(`#${docDb.idDoc}-${docDb.title}`, `#${docDb.idDoc}-${doc.title}`);
+            }
             const contentFile = doc.content ? doc.content: '';
-            this.writeInFile(contentFile, `#${docId}-${doc.title}`, (arg) => {
-                print(docId, arg);
+            this.writeInFile(contentFile, `#${docDb.idDoc}-${doc.title}`, (arg) => {
+                this.updateDoc(docDb.idDoc, `${doc.title}`, () => {
+                    print(docDb.idDoc, arg);
+                })
             });
+
         });
     };
+
+
+    this.updateDoc = (docId, title, print) => {
+        mysql.query(SQL_REQUEST.DOC.PUT.UPDATE_DOC, [title, new Date(), docId], (error, results, fields) => {
+            if (error) {
+                console.log(error);
+            }
+            print()
+        });
+    }
 
     this.relDocCat = (catId, docId, print) => {
         mysql.query(SQL_REQUEST.CAT_DOC.POST.DOCS_CAT, [docId, catId], (error, results, fields) => {
