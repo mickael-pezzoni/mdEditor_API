@@ -43,9 +43,11 @@ router.post('/signup', (req, res, next) => {
                 err: err
             });
         } else {
+            const token = jwt.sign({username: loginForm.username}, conf.jwtSecret);
             res.json({
                 code: 200,
                 msg: 'User create',
+                token: token,
                 userId: succes
             });
         }
