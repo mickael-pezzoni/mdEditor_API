@@ -6,7 +6,9 @@ const loginRouter = require('./routes/login');
 const docsRouter = require('./routes/docs');
 const cors = require('cors');
 
-app.use(cors());
+app.options('*', cors()) // include before other routes
+
+//app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
