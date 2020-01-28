@@ -1,19 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const LoginModel = require('../models/login');
-
+const conf = require('../config');
 let loginModel = new LoginModel();
+const jwt = require('jsonwebtoken');  
+
 
 router.post('/signin', (req, res, next) => {
     const loginForm = {
         username: req.body.username,
         password: req.body.password
     };
+    const token = jwt.sign({username: loginForm.username}, conf.jwtSecret)
     loginModel.signin(loginForm).then(
         _user => {
             res.json({
                 code: 200,
                 msg: 'Login successfull',
+                token: token,
                 userId: _user.idUser
             });
         }
