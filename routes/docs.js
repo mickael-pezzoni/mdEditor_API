@@ -39,7 +39,9 @@ router.get('/cat/:catId', (req, res, next) => {
 });
 
 router.delete('/:docsId', (req, res, next) => {
-    docsModel.deleteByDocId(req.params.docsId);
+    docsModel.deleteByDocId(req.params.docsId, (arg) => {
+        res.json({ msg: arg});
+    });
 });
 
 router.delete('/category/:docId/:catId', (req, res, next) => {

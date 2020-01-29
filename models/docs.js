@@ -14,7 +14,7 @@ module.exports = function Doc() {
             }
             const finalRes = [];
             results.map(_x => {
-                if (_x.idCat === null){
+                if (_x.idCat === null) {
                     _x.idCat = [];
                 } else {
                     _x.idCat = [_x.idCat];
@@ -59,7 +59,15 @@ module.exports = function Doc() {
 
     this.renameFile = (oldTitle, newTitle) => {
         fs.rename(`${FILE_DIRECTORY}/${oldTitle}.md`, `${FILE_DIRECTORY}/${newTitle}.md`, (err) => {
-            if (err){
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    this.deleteFile = (fileTitle) => {
+        fs.unlink(`${FILE_DIRECTORY}/${fileTitle}.md`, (err) => {
+            if (err) {
                 console.log(err);
             }
         });
@@ -81,7 +89,7 @@ module.exports = function Doc() {
             if (error) {
                 console.log(error);
             } else {
-                print(results)
+                print(results);
             }
         });
     }
@@ -106,7 +114,7 @@ module.exports = function Doc() {
                 if (error) {
                     console.log(error);
                 }
-                if (results.length > 0) {
+                else if (results.length > 0) {
                     reject(results[0]);
                 } else {
                     resolve(true);
@@ -118,19 +126,19 @@ module.exports = function Doc() {
 
     this.newDoc = (doc, print) => {
         this.checkFileExist(doc._id).then(_x => {
-            mysql.query(SQL_REQUEST.DOC.POST.NEW_DOC, [`${doc.title}`, `${FILE_DIRECTORY}`, 
+            mysql.query(SQL_REQUEST.DOC.POST.NEW_DOC, [`${doc.title}`, `${FILE_DIRECTORY}`,
             doc.description, new Date(doc.modified), new Date(doc.created), doc.userId],
                 (error, results, field) => {
                     if (error) {
                         console.log(error);
                     } else {
                         console.log(results);
-                        const contentFile = doc.content ? doc.content: '';
+                        const contentFile = doc.content ? doc.content : '';
                         this.writeInFile(contentFile, `#${results.insertId}-${doc.title}`, (arg) => {
                             print(results.insertId, arg);
                         });
                         if (doc.idCat.length > 0) { // if category
-                            this.relDocCat(doc.idCat, results.insertId,() => {});
+                            this.relDocCat(doc.idCat, results.insertId, () => { });
                         }
                     }
                 });
@@ -138,7 +146,7 @@ module.exports = function Doc() {
             if (doc.title !== docDb.title) { // if file name change
                 this.renameFile(`#${docDb.idDoc}-${docDb.title}`, `#${docDb.idDoc}-${doc.title}`);
             }
-            const contentFile = doc.content ? doc.content: '';
+            const contentFile = doc.content ? doc.content : '';
             this.writeInFile(contentFile, `#${docDb.idDoc}-${doc.title}`, (arg) => {
                 this.updateDoc(docDb.idDoc, `${doc.title}`, () => {
                     print(docDb.idDoc, arg);
@@ -162,9 +170,18 @@ module.exports = function Doc() {
         mysql.query(SQL_REQUEST.CAT_DOC.POST.DOCS_CAT, [docId, catId], (error, results, fields) => {
             if (error) {
                 console.log(error);
-                console.log(fields);
             } else {
                 print(fields);
+            }
+        });
+    }
+
+    this.deleteAllCategoryDoc = (docId, next) => {
+        mysql.query(SQL_REQUEST.CAT_DOC.DELETE_ALL_DOC, [docId], (error, results, fields) => {
+            if (error) {
+                console.log(error);
+            } else {
+                next();
             }
         });
     }
@@ -179,7 +196,22 @@ module.exports = function Doc() {
         });
     }
 
-    this.deleteByDocId = (docId) => {
-        console.log(docId);
-    };
+    this.deleteByDocId = (docId, print) => {
+        this.checkFileExist(docId).then(_res => {
+            print('doc not exist');
+        }).catch(_doc => { // si le doc existe
+            console.log('exist');
+            this.deleteAllCategoryDoc(docId, () => {
+                this.deleteFile(`#${docId}-${_doc.title}`);
+                mysql.query(SQL_REQUEST.DOC.DELETE.DELETE, [docId], (error, results, field) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    else {
+                        print(`doc ${docId} deleted`);
+                    }
+                });
+            });
+        });
+    }
 }

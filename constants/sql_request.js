@@ -38,14 +38,15 @@ module.exports = {
             UPDATE_DOC: 'UPDATE Docs SET title = ?, modified = ? WHERE idDoc = ?;'
         },
         DELETE: {
-
+            DELETE: 'DELETE FROM Docs WHERE idDoc = ?;'
         }
     },
     CAT_DOC: {
         POST: {
             DOCS_CAT: 'INSERT INTO catDoc (`idDoc`, `idCat`) VALUES(?, ?);'
         },
-        DELETE: 'DELETE FROM catDoc WHERE idDoc = ? AND idCat = ?;'
+        DELETE: 'DELETE FROM catDoc WHERE idDoc = ? AND idCat = ?;',
+        DELETE_ALL_DOC: 'DELETE FROM catDoc WHERE idDoc = ?'
     },
     CAT: {
         GET: {
