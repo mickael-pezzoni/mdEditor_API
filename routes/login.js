@@ -11,7 +11,7 @@ router.post('/signin', (req, res, next) => {
         username: req.body.username,
         password: req.body.password
     };
-    const token = jwt.sign({username: loginForm.username}, conf.jwtSecret)
+    const token = jwt.sign({username: loginForm.username}, conf.jwtSecret, {expiresIn: '24h'})
     loginModel.signin(loginForm).then(
         _user => {
             res.json({
@@ -43,7 +43,7 @@ router.post('/signup', (req, res, next) => {
                 err: err
             });
         } else {
-            const token = jwt.sign({username: loginForm.username}, conf.jwtSecret);
+            const token = jwt.sign({username: loginForm.username}, conf.jwtSecret, {expiresIn: '24h'})
             res.json({
                 code: 200,
                 msg: 'User create',
