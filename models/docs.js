@@ -94,11 +94,29 @@ module.exports = function Doc() {
         });
     }
 
-    this.getDocsByCat = (print) => {
+    this.getAllDocs = (print) => {
         mysql.query(SQL_REQUEST.DOC.GET.ALL_DOCS, (error, results, fields) => {
-            if (error)
+            if (error) {
                 console.log(error);
-            print(results);
+            } else {
+                const finalRes = [];
+                results.map(_x => {
+                    if (_x.idCat === null) {
+                        _x.idCat = [];
+                    } else {
+                        _x.idCat = [_x.idCat];
+                    }
+                    return _x;
+                }).forEach(_doc => {
+                    const index = finalRes.findIndex(_x => _x._id === _doc._id);
+                    if (index !== -1) {
+                        finalRes[index].idCat.push(_doc.idCat[0]);
+                    } else {
+                        finalRes.push(_doc)
+                    }
+                });
+                print(finalRes);
+            }
         });
     }
 
