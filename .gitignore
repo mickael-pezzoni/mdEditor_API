@@ -4,7 +4,8 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-config_db.js
+config.js
+docFile
 # Runtime data
 pids
 *.pid
