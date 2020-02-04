@@ -5,10 +5,14 @@ const categeorieRouter = require('./routes/categories');
 const loginRouter = require('./routes/login');
 const docsRouter = require('./routes/docs');
 const cors = require('cors');
+const conf = require('./config');
+const expressJwt = require('express-jwt');
 
-app.options('*', cors()) // include before other routes
+app.use(cors());
+app.options('*', cors());
+app.use(expressJwt({secret: conf.jwtSecret}).unless({path: [/auth/g]}));
 
-//app.use(cors());
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

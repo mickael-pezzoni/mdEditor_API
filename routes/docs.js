@@ -21,6 +21,16 @@ router.get('/docsByCat', (req, res, next) => {
         res.json(results);
     });
 });
+
+router.get('/content/:docId', (req, res, next) => {
+    docsModel.getContentByDocId(req.params.docId, (content, err) => {
+        if(err) {
+            res.json({err: err})
+        } else {
+            res.json({content: content});
+        }
+    })
+});
 // return cat from id
 router.get('/cat/:catId', (req, res, next) => {
     docsModel.getDocsByCatId(req.params.catId, (results) => {
@@ -29,11 +39,31 @@ router.get('/cat/:catId', (req, res, next) => {
 });
 
 router.delete('/:docsId', (req, res, next) => {
-    docsModel.deleteByDocsId(req.params.docsId);
+    docsModel.deleteByDocId(req.params.docsId, (arg) => {
+        res.json({ msg: arg});
+    });
 });
+
+router.delete('/category/:docId/:catId', (req, res, next) => {
+    docsModel.deleteCategoryDoc(req.params.docId, req.params.catId, (arg) => {
+        res.json({msg: arg});
+    });
+})
 
 router.post('/new', (req, res, next) => {
-    console.log(req.body);
+    const doc = req.body;
+    console.log(doc);
+    docsModel.newDoc(doc, (docId, arg) => {
+        res.json({
+            'msg': arg,
+            'docId': docId,
+        });
+    });
 });
 
+router.post('/category/new', (req, res, next) => {
+     docsModel.relDocCat(req.body.catId, req.body.docId, (arg) => {
+        res.json({msg: arg});
+    });
+});
 module.exports = router;

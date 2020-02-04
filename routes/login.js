@@ -1,19 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const LoginModel = require('../models/login');
-
+const conf = require('../config');
 let loginModel = new LoginModel();
+const jwt = require('jsonwebtoken');  
+
 
 router.post('/signin', (req, res, next) => {
     const loginForm = {
         username: req.body.username,
         password: req.body.password
     };
+    const token = jwt.sign({username: loginForm.username}, conf.jwtSecret, {expiresIn: '24h'})
     loginModel.signin(loginForm).then(
-        _status => {
+        _user => {
             res.json({
                 code: 200,
-                msg: 'Login successfull'
+                msg: 'Login successfull',
+                token: token,
+                userId: _user.idUser
             });
         }
     ).catch(
@@ -32,14 +37,18 @@ router.post('/signup', (req, res, next) => {
         username: req.body.username,
         password: req.body.password
     };
-    loginModel.signup(loginForm, (err) => {
+    loginModel.signup(loginForm, (succes, err) => {
         if (err != null) {
             res.json({
                 err: err
             });
         } else {
+            const token = jwt.sign({username: loginForm.username}, conf.jwtSecret, {expiresIn: '24h'})
             res.json({
-                msg: 'user create'
+                code: 200,
+                msg: 'User create',
+                token: token,
+                userId: succes
             });
         }
     });
