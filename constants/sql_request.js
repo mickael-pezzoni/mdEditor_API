@@ -62,5 +62,9 @@ module.exports = {
         DELETE: {
 
         }
+    },
+    IMG:  {
+        GET_USER: 'SELECT * FROM `Images` WHERE idUser = ?;',
+        NEW: 'INSERT INTO `Images`(`file`, `name`, `idUser`) VALUES (?, ?, ?);'
     }
 }
