@@ -12,10 +12,9 @@ const expressJwt = require('express-jwt');
 app.use(cors());
 app.options('*', cors());
 app.use(expressJwt({secret: conf.jwtSecret}).unless({path: [/auth/g]}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 app.listen(8080);
 

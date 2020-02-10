@@ -65,6 +65,6 @@ module.exports = {
     },
     IMG:  {
         GET_USER: 'SELECT * FROM `Images` WHERE idUser = ?;',
-        NEW: 'INSERT INTO `Images`(`file`, `name`, `idUser`) VALUES (?, ?, ?);'
+        NEW: 'INSERT INTO `Images`(`file`, `idUser`) VALUES (?, ?);'
     }
 }
