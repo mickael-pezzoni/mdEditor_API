@@ -21,7 +21,7 @@ module.exports = {
             'INNER JOIN User U ON U.idUser = D.idUser '+
             'LEFT JOIN catDoc CT ON CT.idDoc = D.idDoc '+
             'LEFT JOIN Categories C ON C.idCat = CT.idCat '+
-            'WHERE D.public = False ' +
+            'WHERE D.public = True ' +
             'GROUP BY D.idDoc, U.username, D.title, D.description, D.modified, D.created, D.path, C.idCat;',
 
             DOCS_CATID: 'SELECT D.title, D.description, D.modified, D.created, D.path ' +
@@ -62,5 +62,9 @@ module.exports = {
         DELETE: {
 
         }
+    },
+    IMG:  {
+        GET_USER: 'SELECT * FROM `Images` WHERE idUser = ?;',
+        NEW: 'INSERT INTO `Images`(`file`, `name`, `idUser`) VALUES (?, ?, ?);'
     }
 }
