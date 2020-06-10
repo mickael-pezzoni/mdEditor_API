@@ -39,7 +39,7 @@ module.exports = function Doc() {
         } */
 
     this.writeInFile = (content, fileTitle, print) => {
-        fs.writeFile(`${FILE_DIRECTORY}/${fileTitle}.md`, content, (err) => {
+        fs.writeFile(`${FILE_DIRECTORY}/${fileTitle}`, content, (err) => {
             if (err) {
                 console.log(err);
             }
@@ -48,7 +48,7 @@ module.exports = function Doc() {
     }
 
     this.readFile = (fileTitle, print) => {
-        fs.readFile(`${FILE_DIRECTORY}/${fileTitle}.md`, 'utf8', (err, data) => {
+        fs.readFile(`${FILE_DIRECTORY}/${fileTitle}`, 'utf8', (err, data) => {
             if (err) {
                 print(null, err.code)
             } else {
@@ -58,7 +58,7 @@ module.exports = function Doc() {
     }
 
     this.renameFile = (oldTitle, newTitle) => {
-        fs.rename(`${FILE_DIRECTORY}/${oldTitle}.md`, `${FILE_DIRECTORY}/${newTitle}.md`, (err) => {
+        fs.rename(`${FILE_DIRECTORY}/${oldTitle}`, `${FILE_DIRECTORY}/${newTitle}`, (err) => {
             if (err) {
                 console.log(err);
             }
@@ -66,7 +66,7 @@ module.exports = function Doc() {
     }
 
     this.deleteFile = (fileTitle) => {
-        fs.unlink(`${FILE_DIRECTORY}/${fileTitle}.md`, (err) => {
+        fs.unlink(`${FILE_DIRECTORY}/${fileTitle}`, (err) => {
             if (err) {
                 console.log(err);
             }
@@ -126,7 +126,7 @@ module.exports = function Doc() {
         });
     }
 
-    this.checkFileExist = (docId) => {
+    this.checkFileNotExist = (docId) => {
         return new Promise((resolve, reject) => {
             mysql.query(SQL_REQUEST.DOC.GET.DOCSID, [docId], (error, results, fields) => {
                 if (error) {
@@ -143,7 +143,7 @@ module.exports = function Doc() {
     }
 
     this.newDoc = (doc, print) => {
-        this.checkFileExist(doc._id).then(_x => {
+        this.checkFileNotExist(doc._id).then(_x => {
             mysql.query(SQL_REQUEST.DOC.POST.NEW_DOC, [`${doc.title}`, `${FILE_DIRECTORY}`,
             doc.description, new Date(doc.modified), new Date(doc.created), doc.userId],
                 (error, results, field) => {
@@ -215,7 +215,7 @@ module.exports = function Doc() {
     }
 
     this.deleteByDocId = (docId, print) => {
-        this.checkFileExist(docId).then(_res => {
+        this.checkFileNotExist(docId).then(_res => {
             print('doc not exist');
         }).catch(_doc => { // si le doc existe
             console.log('exist');
