@@ -7,36 +7,36 @@ module.exports = {
     },
     DOC: {
         GET: {
-            DOCS_USERID: 'SELECT D.idDoc as _id, D.title, D.description, D.modified, D.created, D.path, C.idCat '+
+            DOCS_USERID: 'SELECT D.idDoc as _id, D.title, D.description, D.modified, D.created, C.idCat '+
             'FROM Docs D ' +
             'LEFT JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
             'LEFT JOIN Categories C ON C.idCat = CT.idCat ' +
             'WHERE D.idUser = ? ' +
-            'GROUP BY D.idDoc, D.title, D.description, D.modified, D.created, D.path, C.idCat; ',
+            'GROUP BY D.idDoc, D.title, D.description, D.modified, D.created, C.idCat; ',
 
             DOCSID: 'SELECT * FROM Docs WHERE idDoc = ?;',
 
-            ALL_DOCS: 'SELECT D.idDoc as _id, U.username, D.title, D.description, D.modified, D.created, D.path, C.idCat '+ 
+            ALL_DOCS: 'SELECT D.idDoc as _id, U.username, D.title, D.description, D.modified, D.created, C.idCat '+ 
             'FROM Docs D '+
             'INNER JOIN User U ON U.idUser = D.idUser '+
             'LEFT JOIN catDoc CT ON CT.idDoc = D.idDoc '+
             'LEFT JOIN Categories C ON C.idCat = CT.idCat '+
             'WHERE D.public = True ' +
-            'GROUP BY D.idDoc, U.username, D.title, D.description, D.modified, D.created, D.path, C.idCat;',
+            'GROUP BY D.idDoc, U.username, D.title, D.description, D.modified, D.created, C.idCat;',
 
-            DOCS_CATID: 'SELECT D.title, D.description, D.modified, D.created, D.path ' +
+            DOCS_CATID: 'SELECT D.title, D.description, D.modified, D.created ' +
             'FROM Docs D ' +
             'INNER JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
             'INNER JOIN Categories C ON C.idCat = CT.idCat ' +
             'WHERE C.idCat = ? ' +
-            'GROUP BY D.title, D.description, D.modified, D.created, D.path;',
+            'GROUP BY D.title, D.description, D.modified, D.created;',
         },
         POST: {
-            NEW_DOC: 'INSERT INTO Docs(`title`, `path`, `description`, `modified`, `created`, `idUser`) VALUES (?, ?, ?, ?, ?, ?)',
+            NEW_DOC: 'INSERT INTO Docs(`title`, `description`,`content`, `modified`, `created`, `idUser`) VALUES (?, ?, ?, ?, ?, ?)',
 
         },
         PUT: {
-            UPDATE_DOC: 'UPDATE Docs SET title = ?, modified = ? WHERE idDoc = ?;'
+            UPDATE_DOC: 'UPDATE Docs SET title = ?, modified = ?, content = ? WHERE idDoc = ?;'
         },
         DELETE: {
             DELETE: 'DELETE FROM Docs WHERE idDoc = ?;'

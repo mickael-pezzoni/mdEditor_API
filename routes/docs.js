@@ -23,7 +23,7 @@ router.get('/docsByCat', (req, res, next) => {
 });
 
 router.get('/content/:docId', (req, res, next) => {
-    docsModel.getContentByDocId(req.params.docId, (content, err) => {
+    docsModel.getDocById(req.params.docId, (content, err) => {
         if(err) {
             res.json({err: err})
         } else {
