@@ -1,9 +1,7 @@
 const mysql = require('../sql_config');
 const SQL_REQUEST = require('../constants/sql_request');
-const fs = require('fs');
 const os = require('os');
 
-const FILE_DIRECTORY = `${os.homedir()}/git/mdEditor_API/docsFile`
 
 module.exports = function Doc() {
 
@@ -37,7 +35,11 @@ module.exports = function Doc() {
             if (error) {
                 console.log(error);
             } else {
-                print(results[0].content);
+                if (results.length < 1) {
+                    print("Not res", null);
+                } else {
+                    print(null, results[0]);
+                }
             }
         });
     }
@@ -74,16 +76,18 @@ module.exports = function Doc() {
         });
     }
 
-    this.checkFileNotExist = (docId) => {
+    this.checkFileExist = (docId) => {
         return new Promise((resolve, reject) => {
             mysql.query(SQL_REQUEST.DOC.GET.DOCSID, [docId], (error, results, fields) => {
+                console.log(results);
                 if (error) {
                     console.log(error);
+                    reject(error);
                 }
                 else if (results.length > 0) {
-                    reject(results[0]);
+                    resolve(results[0]);
                 } else {
-                    resolve(true);
+                    reject(false);
                 }
 
             });
@@ -91,7 +95,11 @@ module.exports = function Doc() {
     }
 
     this.newDoc = (doc, print) => {
-        this.checkFileNotExist(doc._id).then(_x => {
+        if (doc._id !== null) {
+            this.updateDoc(doc, doc._id, print);
+            console.log("RESOLVE");
+        } else {
+            console.log("REJECT");
             mysql.query(SQL_REQUEST.DOC.POST.NEW_DOC, [`${doc.title}`,
             doc.description, doc.content, new Date(doc.modified), new Date(doc.created), doc.userId],
                 (error, results, field) => {
@@ -105,9 +113,7 @@ module.exports = function Doc() {
                         print(results.insertId, 'created');
                     }
                 });
-        }).catch(docDb => { //  if file exist
-            this.updateDoc(doc, docDb.idDoc, print);
-        });
+        }
     };
 
 
@@ -151,9 +157,7 @@ module.exports = function Doc() {
     }
 
     this.deleteByDocId = (docId, print) => {
-        this.checkFileNotExist(docId).then(_res => {
-            print('doc not exist');
-        }).catch(_doc => { // si le doc existe
+        this.checkFileExist(docId).then(_doc => {
             console.log('exist');
             this.deleteAllCategoryDoc(docId, () => {
                 mysql.query(SQL_REQUEST.DOC.DELETE.DELETE, [docId], (error, results, field) => {
@@ -165,6 +169,8 @@ module.exports = function Doc() {
                     }
                 });
             });
+        }).catch(_doc => { // si le doc existe
+            print('doc not exist');
         });
     }
 }

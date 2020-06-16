@@ -10,6 +10,16 @@ router.get('/all', (req, res, next) => {
     });
 });
 
+router.get('/:docId', (req, res, next) => {
+    docsModel.getDocById(req.params.docId, (_err, _doc) => {
+        if (_err) {
+            res.status(404).json({err: 'Not res'});
+        } else {
+            res.json(_doc);
+        }
+    }); 
+});
+
 router.get('/user/:userId', (req, res, next) => {
     docsModel.getDocsByUser(req.params.userId, (results) => {
         res.json(results);
@@ -23,11 +33,11 @@ router.get('/docsByCat', (req, res, next) => {
 });
 
 router.get('/content/:docId', (req, res, next) => {
-    docsModel.getDocById(req.params.docId, (content, err) => {
-        if(err) {
+    docsModel.getDocById(req.params.docId, (_err, _doc) => {
+        if(_err) {
             res.json({err: err})
         } else {
-            res.json({content: content});
+            res.json({content: _doc.content});
         }
     })
 });

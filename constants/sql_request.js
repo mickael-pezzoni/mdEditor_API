@@ -7,22 +7,22 @@ module.exports = {
     },
     DOC: {
         GET: {
-            DOCS_USERID: 'SELECT D.idDoc as _id, D.title, D.description, D.modified, D.created, C.idCat '+
+            DOCS_USERID: 'SELECT D.idDoc as _id, D.title, D.description, D.modified, D.created, C.idCat, D.idUser as userId '+
             'FROM Docs D ' +
             'LEFT JOIN catDoc CT ON CT.idDoc = D.idDoc ' +
             'LEFT JOIN Categories C ON C.idCat = CT.idCat ' +
             'WHERE D.idUser = ? ' +
-            'GROUP BY D.idDoc, D.title, D.description, D.modified, D.created, C.idCat; ',
+            'GROUP BY D.idDoc, D.title, D.description, D.modified, D.created, C.idCat, D.idUser; ',
 
             DOCSID: 'SELECT * FROM Docs WHERE idDoc = ?;',
 
-            ALL_DOCS: 'SELECT D.idDoc as _id, U.username, D.title, D.description, D.modified, D.created, C.idCat '+ 
+            ALL_DOCS: 'SELECT D.idDoc as _id, U.username, D.title, D.description, D.modified, D.created, C.idCat, D.idUser as userId '+ 
             'FROM Docs D '+
             'INNER JOIN User U ON U.idUser = D.idUser '+
             'LEFT JOIN catDoc CT ON CT.idDoc = D.idDoc '+
             'LEFT JOIN Categories C ON C.idCat = CT.idCat '+
             'WHERE D.public = True ' +
-            'GROUP BY D.idDoc, U.username, D.title, D.description, D.modified, D.created, C.idCat;',
+            'GROUP BY D.idDoc, U.username, D.title, D.description, D.modified, D.created, C.idCat, D.idUser;',
 
             DOCS_CATID: 'SELECT D.title, D.description, D.modified, D.created ' +
             'FROM Docs D ' +
